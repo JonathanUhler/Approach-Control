@@ -13,26 +13,6 @@ import java.awt.Font;
 
 public class Aircraft {
 
-	/*
-	  Resouces
-	  - https://www.youtube.com/watch?v=He6PDSR4qFk&t=30s&ab_channel=PlasticPilot
-	  - channel APPcalyptus
-	  - https://twitter.com/APPControl
-
-	  Graphics display
-
-	     -- Basic display --
-		 [AIRLINE + FLIGHT NUMBER]
-		 [CURRENT ALT]
-
-		 -- Hover/click display --
-		 +-----------------------------+
-		 |[FLT NUMBER] [MAKE + MODEL]  |
-		 |[TARGET RWY/WPT] [TARGET ALT]|
-		 |[CURRENT ALT] [CURRENT SPD]  |
-		 +-----------------------------+
-	 */
-
 	// Intervals for rounding and selection of values
 	public static final int SPD_INTERVAL = 10;
 	public static final int ALT_INTERVAL = 1000;
@@ -101,21 +81,21 @@ public class Aircraft {
 		// Set altitude
 		// Incoming/landing traffic: max / 2 <= y_start <= max
 		// Outgoing/takeoff traffic: y_start == 0
-		int maxStartAlt = landing ? this.type.maxAlt : 0;
 		int minStartAlt = landing ? this.type.maxAlt / 2 : 0;
+		int maxStartAlt = Math.max((landing ? this.type.maxAlt : 0), minStartAlt);
 		int startAlt = (int) (Math.random() * (maxStartAlt - minStartAlt + 1)) + minStartAlt;
 		this.currentAlt = AircraftMath.round(startAlt, Aircraft.ALT_INTERVAL);
 		// Outgoing/takeoff traffic: min <= y_target <= max / 3
-		int maxEndAlt = this.type.maxAlt / 3;
 		int minEndAlt = this.type.minAlt;
+		int maxEndAlt = Math.max((this.type.maxAlt / 3), minEndAlt);
 		int endAlt = landing ? (int) this.currentAlt : (int) (Math.random() * (maxEndAlt - minEndAlt + 1) + minEndAlt);
 		this.targetAlt = AircraftMath.round(endAlt, Aircraft.ALT_INTERVAL);
 
 		// Set speed
 		// Incoming/landing traffic: max / 2 <= v <= max
 		// Outgoing/takeoff traffic: min <= v <= max / 2
-		int maxSpd = landing ? this.type.maxSpd : this.type.maxSpd / 2;
-		int minSpd = landing ? this.type.maxSpd / 2 : this.type.minSpd;
+		int minSpd = this.type.minSpd;
+		int maxSpd = Math.max((landing ? this.type.maxSpd : this.type.maxSpd / 2), minSpd);
 		int spd = (int) (Math.random() * (maxSpd - minSpd + 1)) + minSpd;
 		this.currentSpd = AircraftMath.round(spd, Aircraft.SPD_INTERVAL);
 		this.targetSpd = this.currentSpd;
