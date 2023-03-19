@@ -131,7 +131,8 @@ public class Screen extends JPanel {
 				if (this.controls != null)
 					this.remove(this.controls);
 				this.controls = controls;
-				this.add(this.controls);
+				if (this.controls != null)
+					this.add(this.controls);
 			}
 
 			this.repaint();

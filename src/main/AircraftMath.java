@@ -39,6 +39,18 @@ public class AircraftMath {
 	}
 
 
+	public static double hdgToTarget(double currentX, double currentY, double targetX, double targetY) {
+	    double directXDist = targetX - currentX;
+		double directYDist = currentY - targetY;
+		double directDist = Math.sqrt(Math.pow(directXDist, 2) + Math.pow(directYDist, 2));
+		double directRad = Math.asin(directYDist / directDist);
+		if (directXDist < 0) // Account for domain restriction of arcsin function
+			directRad = Math.PI - directRad;
+		
+		return AircraftMath.radToHdg(directRad);
+	}
+
+
 	public static double approachHdg(double current, double target, double interval) {
 		double ceil = current + interval;
 		double floor = current - interval;

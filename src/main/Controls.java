@@ -114,10 +114,14 @@ public class Controls extends JComponent implements MouseListener {
 		g.fillRect(this.directToOffsetX, this.directToOffsetY, this.directToWidth, this.strHeight);
 		g.setColor(Screen.RADAR_COLOR);
 		g.drawRect(this.directToOffsetX, this.directToOffsetY, this.directToWidth, this.strHeight);
+		if (!this.owner.canBeCleared())
+			g.setColor(Screen.RADAR_COLOR.darker().darker());
 		g.drawString(directToStr, this.directToOffsetX, this.directToOffsetY + (int) (this.strHeight * 0.8));
 		
 
 		// Draw airspeed and altitude spinners
+		g.setColor(Screen.RADAR_COLOR);
+		
 		int totalSpdHeight = this.strHeight * this.spdCount;
 		int totalAltHeight = this.strHeight * this.altCount;
 

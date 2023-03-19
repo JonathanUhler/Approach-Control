@@ -114,18 +114,39 @@ public class Aircraft {
 
 
 	public boolean atTarget() {
+		double error = 0.5;
+		
+		// Check for final target position
 		double targetX = this.target.getX();
 		double targetY = this.target.getY();
-		double error = 0.5;
+		boolean atTarget = this.x >= targetX - error && this.x <= targetX + error &&
+			               this.y >= targetY - error && this.y <= targetY + error &&
+			               this.cleared;
 
-		return this.x >= targetX - error && this.x <= targetX + error &&
-			   this.y >= targetY - error && this.y <= targetY + error &&
-			   this.cleared;
+		// Check for approach position. If true, "pass" control to tower
+		double approachX = this.target.getTargetX();
+		double approachY = this.target.getTargetY();
+		if (this.target instanceof Runway && this.cleared &&
+			this.x >= approachX - error && this.x <= approachX + error &&
+			this.y >= approachY - error && this.y <= approachY + error)
+		{
+			this.controls = null; // Prevent takeover
+			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y, this.target.getX(), this.target.getY());
+			this.targetAlt = 0;
+		}
+		
+		// Return result
+		return atTarget;
 	}
 
 
 	public boolean isCleared() {
 		return this.cleared;
+	}
+
+
+	public boolean canBeCleared() {
+		return true;
 	}
 
 
@@ -190,7 +211,12 @@ public class Aircraft {
 
 
 	public void toggleClearance() {
-		this.cleared = !this.cleared;
+		if (this.cleared)
+			this.cleared = false;
+		else {
+			if (this.canBeCleared())
+				this.cleared = true;
+		}
 	}
 
 
@@ -301,16 +327,10 @@ public class Aircraft {
 		this.x += dx * gameSpeed;
 		this.y -= dy * gameSpeed;
 
-		// Clearance heading update
-		if (this.cleared) {
-			double directXDist = this.target.getX() - this.x;
-			double directYDist = this.y - this.target.getY();
-			double directDist = Math.sqrt(Math.pow(directXDist, 2) + Math.pow(directYDist, 2));
-			double directRad = Math.asin(directYDist / directDist);
-			if (directXDist < 0) // Account for domain restriction of arcsin function
-				directRad = Math.PI - directRad;
-			this.targetHdg = AircraftMath.radToHdg(directRad);
-		}
+		// Clearance heading update if still in control of the aircraft (not passed to tower yet)
+		if (this.cleared && this.controls != null)
+			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y,
+													  this.target.getTargetX(), this.target.getTargetY());
 
 		// Update speed, altitude, and heading
 		double altChange = ((Math.random() * (18 - 15)) + 15) * (t_s); // Between 900-1100 fpm == 15-18 fps

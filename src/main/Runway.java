@@ -16,6 +16,26 @@ public class Runway extends Waypoint {
 
 
 	@Override
+	public double getTargetX() {
+		double rad = AircraftMath.hdgToRad(super.getExitHdg());
+		double startPxX = super.getX();
+		double endPxX = this.length * Math.cos(rad);
+
+		return startPxX - endPxX * 1.5;
+	}
+
+
+	@Override
+	public double getTargetY() {
+		double rad = AircraftMath.hdgToRad(super.getExitHdg());
+		double startPxY = super.getX();
+		double endPxY = this.length * Math.cos(rad);
+
+		return startPxY - endPxY * 1.5;
+	}
+
+
+	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D gg = (Graphics2D) g.create();
 

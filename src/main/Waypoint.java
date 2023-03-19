@@ -38,6 +38,16 @@ public abstract class Waypoint {
 	}
 
 
+	public double getTargetX() {
+		return this.x;
+	}
+
+
+	public double getTargetY() {
+		return this.y;
+	}
+
+
 	public abstract void paintComponent(Graphics g);
 
 
