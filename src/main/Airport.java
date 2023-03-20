@@ -1,5 +1,9 @@
 import javax.swing.JComponent;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
@@ -102,6 +106,61 @@ public class Airport extends JComponent implements MouseListener {
 	}
 
 
+	private void checkSeparation(Graphics g) {
+		Graphics2D gg = (Graphics2D) g.create();
+		gg.setFont(new Font("Courier New", Font.BOLD, (int) (Airport.pxPerMile * 0.7)));
+		
+		for (int i = 0; i < this.aircraft.length; i++) {
+			for (int j = i + 1; j < this.aircraft.length; j++) {
+				Aircraft aircraft1 = this.aircraft[i];
+				Aircraft aircraft2 = this.aircraft[j];
+				if (aircraft1 == null || aircraft2 == null)
+					continue;
+				
+				double alt1 = aircraft1.getCurrentAlt();
+				double alt2 = aircraft2.getCurrentAlt();
+				double x1 = aircraft1.getX();
+				double x2 = aircraft2.getX();
+				double y1 = aircraft1.getY();
+				double y2 = aircraft2.getY();
+				double dx = Math.abs(x1 - x2);
+				double dy = Math.abs(y1 - y2);
+				double separation = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+
+				// Conflict detection
+				if (Math.abs(alt1 - alt2) < 1000 && separation < 5) {
+					// Set color based on distance
+					if (separation < 3)
+						gg.setColor(new Color(255, 0, 0));
+					else {
+						// Draw current separation
+						String separationStr = Double.toString(Math.round(separation * 10) / 10.0);
+						int strW = gg.getFontMetrics().stringWidth(separationStr);
+						int strH = gg.getFontMetrics().getHeight();
+						int strX = (int) ((Math.min(x1, x2) + dx / 2) * Airport.pxPerMile) - strW / 2;
+						int strY = (int) ((Math.min(y1, y2) + dy / 2) * Airport.pxPerMile) - strH / 2;
+
+						// Draw solid rectangle background with black separation text
+						gg.setColor(Screen.RADAR_COLOR);
+						gg.fillRect(strX, strY, strW, strH);
+						gg.setColor(new Color(0, 0, 0));
+						gg.drawString(separationStr, strX, strY + (int) (strH * 0.7));
+
+						gg.setColor(Screen.RADAR_COLOR);
+					}
+
+					// Draw connecting line
+					gg.draw(new Line2D.Double(x1 * Airport.pxPerMile, y1 * Airport.pxPerMile,
+											  x2 * Airport.pxPerMile, y2 * Airport.pxPerMile));
+				}
+			}
+		}
+
+		// Dispose graphics copy
+		gg.dispose();
+	}
+
+
 	@Override
 	public void paintComponent(Graphics g) {
 		int w = super.getBounds().width;
@@ -123,20 +182,23 @@ public class Airport extends JComponent implements MouseListener {
 		// Draw aircraft
 		for (int i = 0; i < this.aircraft.length; i++) {
 			Aircraft aircraft = this.aircraft[i];
+			if (aircraft == null)
+				continue;
 
-			if (aircraft != null) {
-				// Draw and update size as needed
-				aircraft.setPreferredSize(Airport.pxPerMile / 2);
-				aircraft.paintComponent(g, this.selected == aircraft);
+			// Draw and update size as needed
+			aircraft.setPreferredSize(Airport.pxPerMile / 2);
+			aircraft.paintComponent(g, this.selected == aircraft);
 
-				// Check if near waypoint and remove
-				if (aircraft.atTarget()) {
-					this.aircraft[i] = null;
-					if (this.selected == aircraft)
-						this.selected = null;
-				}
+			// Check if near waypoint and remove
+			if (aircraft.atTarget()) {
+				this.aircraft[i] = null;
+				if (this.selected == aircraft)
+					this.selected = null;
 			}
 		}
+
+		// Check separation, drawing warning lines as needed
+		this.checkSeparation(g);
 	}
 
 

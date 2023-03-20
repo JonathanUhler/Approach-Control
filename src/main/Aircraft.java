@@ -154,6 +154,11 @@ public class Aircraft {
 	}
 
 
+	public double getCurrentAlt() {
+		return this.currentAlt;
+	}
+
+
 	public double getTargetAlt() {
 		return this.targetAlt;
 	}

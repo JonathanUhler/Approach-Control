@@ -9,7 +9,7 @@ import java.awt.Dimension;
 
   - Game loop
     - Adding new aircraft to fill the buffer
-  - Incursion detection: < 3 nm horizontal, < 1000 ft vertical
+	- Point/score system
   - Airports
     - Finish KFJK (waypoints, maybe more runways)
     - More options

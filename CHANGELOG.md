@@ -6,6 +6,12 @@
 ### Fixed
 ### Changed
 
+## [0.1.4] - 3/20/23
+### Added
+* Added separation detection and warning system
+### Fixed
+### Changed
+
 ## [0.1.3] - 3/19/23
 ### Added
 * Aircraft must now meet an altitude requirement to be given clearance
