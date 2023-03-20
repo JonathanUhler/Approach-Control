@@ -6,6 +6,12 @@
 ### Fixed
 ### Changed
 
+## [0.1.6] - 3/20/23
+### Added
+* New aircraft will now be added at some rate depending on the airport
+### Fixed
+### Changed
+
 ## [0.1.5] - 3/20/23
 ### Added
 ### Fixed

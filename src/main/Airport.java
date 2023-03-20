@@ -21,6 +21,7 @@ public class Airport extends JComponent implements MouseListener {
 
 	// Airport information
 	private Code icao;
+	private double acPerMin;
 	private Aircraft selected;
 	private Aircraft[] aircraft;
 	private Waypoint[] waypoints;
@@ -31,7 +32,8 @@ public class Airport extends JComponent implements MouseListener {
 	public Airport(Code icao) {
 		this.setFocusable(true);
 		this.addMouseListener(this);
-		
+
+		// Initialize airport information
 		if (icao == null)
 			throw new NullPointerException("icao code cannot be null");
 		this.icao = icao;
@@ -45,6 +47,10 @@ public class Airport extends JComponent implements MouseListener {
 		this.calculateConstants();
 		this.aircraft = new Aircraft[this.waypoints.length * 3];
 
+		// Check that the call to initialize() was successful for this icao
+		if (this.acPerMin <= 0)
+			throw new IllegalArgumentException("acPerMin not initialized correctly for icao " + this.icao.name());
+
 		// Add starting aircraft
 		int minAircraft = 1;
 		int maxAircraft = Math.max(minAircraft, this.waypoints.length);
@@ -57,6 +63,7 @@ public class Airport extends JComponent implements MouseListener {
 	private void initialize(Code icao) {
 		switch (icao) {
 		case KJFK:
+			this.acPerMin = 0.7;
 			this.inbound = new Waypoint[] {
 				new Runway("13L", this.radarRange / 2 + 1.23, this.radarRange / 2 - 0.58, 10000, 130),
 				new Runway("13R", this.radarRange / 2, this.radarRange / 2, 14511, 130)
@@ -243,6 +250,12 @@ public class Airport extends JComponent implements MouseListener {
 
 		// Check separation, drawing warning lines as needed
 		this.checkSeparation(g);
+
+		// Add new aircraft based on the number of aircraft (ac) per minute for this airport
+		double secPerAC = (1 / this.acPerMin) * 60;
+		int addChance = (int) (Math.random() * (Screen.FRAME_RATE * secPerAC / Screen.gameSpeed()));
+		if (addChance == 0)
+			this.addAircraft();
 	}
 
 

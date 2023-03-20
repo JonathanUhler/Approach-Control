@@ -8,7 +8,6 @@ import java.awt.Dimension;
   TO-DO
 
   - Game loop
-    - Adding new aircraft to fill the buffer
 	- Point/score system
   - Airports
     - Finish KFJK (waypoints, maybe more runways)
