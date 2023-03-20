@@ -73,7 +73,10 @@ public class Controls extends JComponent implements MouseListener {
 		super.paintComponent(g);
 		g.setFont(this.font);
 		this.strHeight = g.getFontMetrics().getHeight();
-		g.setColor(Screen.RADAR_COLOR);
+		
+		Color radarColor = Screen.RADAR_COLOR;
+		Color lightRadarColor = new Color(radarColor.getRed(), radarColor.getGreen(), radarColor.getBlue(), 100);
+		g.setColor(radarColor);
 
 		
 		// Draw compass
@@ -110,17 +113,17 @@ public class Controls extends JComponent implements MouseListener {
 		// Draw "direct to" button
 		String directToStr = "Cleared " + this.owner.getTarget();
 		this.directToWidth = g.getFontMetrics().stringWidth(directToStr);
-		g.setColor(this.owner.isCleared() ? new Color(130, 240, 70, 100) : new Color(0, 0, 0, 100));
+		g.setColor(this.owner.isCleared() ? lightRadarColor : new Color(0, 0, 0, 100));
 		g.fillRect(this.directToOffsetX, this.directToOffsetY, this.directToWidth, this.strHeight);
-		g.setColor(Screen.RADAR_COLOR);
+		g.setColor(radarColor);
 		g.drawRect(this.directToOffsetX, this.directToOffsetY, this.directToWidth, this.strHeight);
 		if (!this.owner.canBeCleared())
-			g.setColor(Screen.RADAR_COLOR.darker().darker());
+			g.setColor(radarColor.darker().darker());
 		g.drawString(directToStr, this.directToOffsetX, this.directToOffsetY + (int) (this.strHeight * 0.8));
 		
 
 		// Draw airspeed and altitude spinners
-		g.setColor(Screen.RADAR_COLOR);
+		g.setColor(radarColor);
 		
 		int totalSpdHeight = this.strHeight * this.spdCount;
 		int totalAltHeight = this.strHeight * this.altCount;
@@ -152,7 +155,16 @@ public class Controls extends JComponent implements MouseListener {
 			if (textWidth > this.altTextWidth)
 				this.altTextWidth = textWidth;
 
+			// Draw background highlight if this is the altitude needed for approach clearance
+			if (this.owner.getTarget().atAlt(alt, this.owner.getMaxAlt())) {
+				g.setColor(lightRadarColor);
+				g.fillRect(this.w - this.margin - textWidth,
+						   altY - (int) (this.strHeight * 0.8),
+						   textWidth, this.strHeight);
+			}
+
 			// Draw string and box if needed
+			g.setColor(radarColor);
 			g.drawString(str, this.w - this.margin - textWidth, altY);
 			if (alt == (int) this.owner.getTargetAlt())
 				g.drawRect(this.w - this.margin - textWidth,

@@ -117,21 +117,15 @@ public class Aircraft {
 		double error = 0.5;
 		
 		// Check for final target position
-		double targetX = this.target.getX();
-		double targetY = this.target.getY();
-		boolean atTarget = this.x >= targetX - error && this.x <= targetX + error &&
-			               this.y >= targetY - error && this.y <= targetY + error &&
-			               this.cleared;
+		boolean atTarget = this.cleared && this.target.inRange(this.x, this.y) &&
+			               this.target.atAlt(this.currentAlt, this.type.maxAlt);
 
 		// Check for approach position. If true, "pass" control to tower
-		double approachX = this.target.getTargetX();
-		double approachY = this.target.getTargetY();
 		if (this.target instanceof Runway && this.cleared &&
-			this.x >= approachX - error && this.x <= approachX + error &&
-			this.y >= approachY - error && this.y <= approachY + error)
+			this.target.inTargetRange(this.x, this.y) && this.target.atAlt(this.currentAlt, this.type.maxAlt))
 		{
+			// Set some basic information, heading will be updated in Aircraft::update
 			this.controls = null; // Prevent takeover
-			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y, this.target.getX(), this.target.getY());
 			this.targetAlt = 0;
 		}
 		
@@ -146,7 +140,7 @@ public class Aircraft {
 
 
 	public boolean canBeCleared() {
-		return true;
+		return this.target.atAlt(this.currentAlt, this.type.maxAlt);
 	}
 
 
@@ -259,35 +253,31 @@ public class Aircraft {
 
 		double pxX = this.x * Airport.pxPerMile();
 		double pxY = this.y * Airport.pxPerMile();
-		double pxCenterX = pxX + this.size / 2.0;
-		double pxCenterY = pxY + this.size / 2.0;
 		double rad = (90.0 - this.currentHdg) * (Math.PI / 180);
 
 		// Draw body
-		gg.rotate(-rad, pxCenterX, pxCenterY); // Angle signs are reversed by Graphics2D::rotate
+		gg.rotate(-rad, pxX, pxY); // Angle signs are reversed by Graphics2D::rotate
 		gg.setStroke(new BasicStroke(1));
 		gg.setColor(Screen.RADAR_COLOR);
 		Rectangle body = new Rectangle();
-		body.setRect(pxX, pxY, this.size, this.size);
+		body.setRect(pxX - this.size / 2.0, pxY - this.size / 2.0, this.size, this.size);
 		gg.draw(body);
 
 		// Draw vector arrow
 		double vectorLength = (this.currentSpd / 50) * this.size;
-		gg.draw(new Line2D.Double(pxCenterX, pxCenterY, pxCenterX + vectorLength, pxCenterY));
+		gg.draw(new Line2D.Double(pxX, pxY, pxX + vectorLength, pxY));
 
 		// Update physics model
 		this.update();
 
 		// Undo changes to graphics
-		gg.rotate(rad, pxCenterX, pxCenterY);
+		gg.rotate(rad, pxX, pxY);
 
 		// Draw separation circles
 		if (Screen.showSepRings()) {
 			int pxPerMile = Airport.pxPerMile();
 			gg.setColor(new Color(255, 0, 0));
-			gg.draw(new Ellipse2D.Double(pxX - pxPerMile - this.size / 2,
-										 pxY - pxPerMile - this.size / 2,
-										 pxPerMile * 3, pxPerMile * 3));
+			gg.draw(new Ellipse2D.Double(pxX - pxPerMile * 1.5, pxY - pxPerMile * 1.5, pxPerMile * 3, pxPerMile * 3));
 		}
 
 		// Draw information string
@@ -331,6 +321,8 @@ public class Aircraft {
 		if (this.cleared && this.controls != null)
 			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y,
 													  this.target.getTargetX(), this.target.getTargetY());
+		else if (this.cleared && this.controls == null)
+			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y, this.target.getX(), this.target.getY());
 
 		// Update speed, altitude, and heading
 		double altChange = ((Math.random() * (18 - 15)) + 15) * (t_s); // Between 900-1100 fpm == 15-18 fps
@@ -338,6 +330,10 @@ public class Aircraft {
 		this.currentSpd = AircraftMath.approachValue(this.currentSpd, this.targetSpd, t_s * gameSpeed);
 		this.currentAlt = AircraftMath.approachValue(this.currentAlt, this.targetAlt, altChange * gameSpeed);
 		this.currentHdg = AircraftMath.approachHdg(this.currentHdg, this.targetHdg, hdgChange * gameSpeed);
+
+		// Change clearance if needed
+		if (!this.canBeCleared())
+			this.cleared = false;
 	}
 
 
@@ -387,9 +383,9 @@ public class Aircraft {
 			
 			this.id = id;
 			this.minAlt = 1000;
-			this.maxAlt = (int) AircraftMath.round(maxAlt / 4, Aircraft.ALT_INTERVAL);
-			this.minSpd = (int) AircraftMath.round(minSpd, Aircraft.SPD_INTERVAL);
-			this.maxSpd = (int) AircraftMath.round(maxSpd / 2, Aircraft.SPD_INTERVAL);
+			this.maxAlt = AircraftMath.round(maxAlt / 4, Aircraft.ALT_INTERVAL);
+			this.minSpd = AircraftMath.round(minSpd, Aircraft.SPD_INTERVAL);
+			this.maxSpd = AircraftMath.round(maxSpd / 2, Aircraft.SPD_INTERVAL);
 		}
 
 

@@ -43,6 +43,9 @@ public class AircraftMath {
 	    double directXDist = targetX - currentX;
 		double directYDist = currentY - targetY;
 		double directDist = Math.sqrt(Math.pow(directXDist, 2) + Math.pow(directYDist, 2));
+		if (directDist == 0)
+			return 0.0;
+			
 		double directRad = Math.asin(directYDist / directDist);
 		if (directXDist < 0) // Account for domain restriction of arcsin function
 			directRad = Math.PI - directRad;

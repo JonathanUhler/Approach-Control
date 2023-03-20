@@ -7,12 +7,13 @@ import java.awt.Dimension;
 /*
   TO-DO
 
-  - Waypoint altitudes: must be at that altitude to clear "direct to"
   - Game loop
     - Adding new aircraft to fill the buffer
-	- Removing aircraft at their goal
   - Incursion detection: < 3 nm horizontal, < 1000 ft vertical
-  - Quality of life: more airport options
+  - Airports
+    - Finish KFJK (waypoints, maybe more runways)
+    - More options
+  - Home/main screen (?)
   - In-file documentation
  */
 

@@ -28,10 +28,10 @@ public class Runway extends Waypoint {
 	@Override
 	public double getTargetY() {
 		double rad = AircraftMath.hdgToRad(super.getExitHdg());
-		double startPxY = super.getX();
-		double endPxY = this.length * Math.cos(rad);
+		double startPxY = super.getY();
+		double endPxY = this.length * Math.sin(rad);
 
-		return startPxY - endPxY * 1.5;
+		return startPxY + endPxY * 1.5;
 	}
 
 
