@@ -49,23 +49,8 @@ public class Airport extends JComponent implements MouseListener {
 		int minAircraft = 1;
 		int maxAircraft = Math.max(minAircraft, this.waypoints.length);
 		int numAircraft = (int) (Math.random() * (maxAircraft - minAircraft + 1)) + minAircraft;
-		for (int i = 0; i < numAircraft; i++) {
-			Waypoint origin = this.waypoints[i % this.waypoints.length];
-			if (origin == null)
-				throw new NullPointerException("waypoint cannot be null, for icao " + this.icao.name());
-			
-			Waypoint target = origin instanceof Runway ?
-				this.outbound[(int) (Math.random() * this.outbound.length)] :
-				this.inbound[(int) (Math.random() * this.inbound.length)];
-			if (target == null)
-				throw new NullPointerException("waypoint cannot be null, for icao " + this.icao.name());
-			
-			Aircraft a = new Aircraft(target);
-			int hdg = origin.getExitHdg();
-			a.setCurrentHdg(hdg);
-			a.setLocation(origin.getX(), origin.getY());
-			this.aircraft[i] = a;
-		}
+		for (int i = 0; i < numAircraft; i++)
+			this.addAircraft();
 	}
 
 
@@ -103,6 +88,65 @@ public class Airport extends JComponent implements MouseListener {
 
 	public Aircraft getSelected() {
 		return this.selected;
+	}
+
+
+	private boolean addAircraft() {
+		// Find null array index
+		int index = -1;
+		for (int i = 0; i < this.aircraft.length; i++) {
+			if (this.aircraft[i] == null) {
+				index = i;
+				break;
+			}
+		}
+		
+		if (index == -1)
+			return false;
+
+		// Get origin waypoint
+		Waypoint origin = this.waypoints[(int) (Math.random() * this.waypoints.length)];
+		if (origin == null)
+			throw new NullPointerException("waypoint cannot be null, for icao " + this.icao.name());
+
+		// Get target waypoint
+		Waypoint target = origin instanceof Runway ?
+			this.outbound[(int) (Math.random() * this.outbound.length)] :
+			this.inbound[(int) (Math.random() * this.inbound.length)];
+		if (target == null)
+			throw new NullPointerException("waypoint cannot be null, for icao " + this.icao.name());
+
+		// Add aircraft
+		Aircraft a = new Aircraft(target);
+		int hdg = origin.getExitHdg();
+		a.setCurrentHdg(hdg);
+		a.setLocation(origin.getX(), origin.getY());
+		if (this.noConflict(a)) {
+			this.aircraft[index] = a;
+			return true;
+		}
+		return false;
+	}
+
+
+	private boolean noConflict(Aircraft aircraft1) {
+		for (Aircraft aircraft2 : this.aircraft) {
+			if (aircraft2 == null || aircraft2 == aircraft1)
+				continue;
+
+			double alt1 = aircraft1.getCurrentAlt();
+			double alt2 = aircraft2.getCurrentAlt();
+			double x1 = aircraft1.getX();
+			double x2 = aircraft2.getX();
+			double y1 = aircraft1.getY();
+			double y2 = aircraft2.getY();
+			double separation = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+
+			if (Math.abs(alt1 - alt2) < 1000 && separation < 3)
+				return false;
+		}
+
+		return true;
 	}
 
 
