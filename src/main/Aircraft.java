@@ -256,6 +256,7 @@ public class Aircraft {
 		Graphics2D gg = (Graphics2D) g.create();
 		gg.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
 
+		// Pixel-space information of the aircraft
 		double pxX = this.x * Airport.pxPerMile();
 		double pxY = this.y * Airport.pxPerMile();
 		double rad = (90.0 - this.currentHdg) * (Math.PI / 180);
@@ -272,13 +273,20 @@ public class Aircraft {
 		double vectorLength = (this.currentSpd / 50) * this.size;
 		gg.draw(new Line2D.Double(pxX, pxY, pxX + vectorLength, pxY));
 
-		// Update physics model
-		this.update();
-
-		// Undo changes to graphics
+		// Undo changes to graphics angle
 		gg.rotate(rad, pxX, pxY);
 
-		// Draw separation circles
+		// Draw dotted line to target if this aircraft is selected and it is not under tower's control yet
+		if (selected && this.controls != null) {
+			double targetX = this.target.getTargetX() * Airport.pxPerMile();
+			double targetY = this.target.getTargetY() * Airport.pxPerMile();
+			gg.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+										 0, new float[] {Airport.pxPerMile() / 2}, Airport.pxPerMile() / 2));
+			gg.draw(new Line2D.Double(pxX, pxY, targetX, targetY));
+			gg.setStroke(new BasicStroke(1));
+		}
+
+		// Draw separation circle of 1.5 mile radius
 		if (Screen.showSepRings()) {
 			int pxPerMile = Airport.pxPerMile();
 			gg.setColor(new Color(255, 0, 0));
@@ -288,8 +296,6 @@ public class Aircraft {
 		// Draw information string
 		String infoStr = selected ? this.toComplexString() : this.toSimpleString();
 		String[] infoSplit = infoStr.split("\n");
-		
-		// Draw text
 		int strY = (int) pxY;
 		gg.setColor(Screen.RADAR_COLOR);
 		gg.setFont(new Font("Courier New", Font.PLAIN, (int) (this.size * 1.7)));
@@ -300,6 +306,9 @@ public class Aircraft {
 			gg.drawString(line, strX, strY);
 			strY += gg.getFontMetrics().getHeight();
 		}
+
+		// Update physics model
+		this.update();
 
 		// Dispose graphics copy
 		gg.dispose();

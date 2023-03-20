@@ -9,9 +9,9 @@ import java.awt.Dimension;
 
   - Game loop
 	- Point/score system
-  - Airports
-    - Finish KFJK (waypoints, maybe more runways)
-    - More options
+	  - (-) for: having an aircraft leave airspace w/o being cleared, separation
+	  - (+) for: processing (landing/handing off) aircraft successfully 
+  - More airports
   - Home/main screen (?)
   - In-file documentation
  */

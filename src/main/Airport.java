@@ -45,7 +45,7 @@ public class Airport extends JComponent implements MouseListener {
 		for (int i = this.outbound.length; i < this.waypoints.length; i++)
 			this.waypoints[i] = this.inbound[i - this.outbound.length];
 		this.calculateConstants();
-		this.aircraft = new Aircraft[this.waypoints.length * 3];
+		this.aircraft = new Aircraft[this.waypoints.length];
 
 		// Check that the call to initialize() was successful for this icao
 		if (this.acPerMin <= 0)
@@ -53,7 +53,7 @@ public class Airport extends JComponent implements MouseListener {
 
 		// Add starting aircraft
 		int minAircraft = 1;
-		int maxAircraft = Math.max(minAircraft, this.waypoints.length);
+		int maxAircraft = Math.max(minAircraft, this.waypoints.length / 2);
 		int numAircraft = (int) (Math.random() * (maxAircraft - minAircraft + 1)) + minAircraft;
 		for (int i = 0; i < numAircraft; i++)
 			this.addAircraft();
@@ -63,13 +63,16 @@ public class Airport extends JComponent implements MouseListener {
 	private void initialize(Code icao) {
 		switch (icao) {
 		case KJFK:
-			this.acPerMin = 0.7;
+			this.acPerMin = 0.6;
 			this.inbound = new Waypoint[] {
 				new Runway("13L", this.radarRange / 2 + 1.23, this.radarRange / 2 - 0.58, 10000, 130),
 				new Runway("13R", this.radarRange / 2, this.radarRange / 2, 14511, 130)
 			};
 			this.outbound = new Waypoint[] {
-				new Airway("BIG", 90, 1, this.radarRange / 2)
+				new Airway("ALB", 180, this.radarRange / 5,     1),
+				new Airway("MHT", 180, 3 * this.radarRange / 5, 1),
+				new Airway("ACK", 270, this.radarRange - 1,     2 * this.radarRange / 5),
+				new Airway("DNY", 0,   2 * this.radarRange / 5, this.radarRange - 1)
 			};
 			break;
 		default:

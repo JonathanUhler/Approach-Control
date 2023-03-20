@@ -6,6 +6,13 @@
 ### Fixed
 ### Changed
 
+## [0.1.7] - 3/20/23
+### Added
+* Selected aircraft draws a line to its target
+### Fixed
+* Balance changes
+### Changed
+
 ## [0.1.6] - 3/20/23
 ### Added
 * New aircraft will now be added at some rate depending on the airport
