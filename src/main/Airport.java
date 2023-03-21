@@ -28,6 +28,9 @@ public class Airport extends JComponent implements MouseListener {
 	private Waypoint[] inbound;
 	private Waypoint[] outbound;
 
+	// Score information
+	private int flights;
+
 
 	public Airport(Code icao) {
 		this.setFocusable(true);
@@ -46,6 +49,7 @@ public class Airport extends JComponent implements MouseListener {
 			this.waypoints[i] = this.inbound[i - this.outbound.length];
 		this.calculateConstants();
 		this.aircraft = new Aircraft[this.waypoints.length];
+		this.flights = 0;
 
 		// Check that the call to initialize() was successful for this icao
 		if (this.acPerMin <= 0)
@@ -98,6 +102,11 @@ public class Airport extends JComponent implements MouseListener {
 
 	public Aircraft getSelected() {
 		return this.selected;
+	}
+
+
+	public int getFlights() {
+		return this.flights;
 	}
 
 
@@ -184,8 +193,9 @@ public class Airport extends JComponent implements MouseListener {
 				// Conflict detection
 				if (Math.abs(alt1 - alt2) < 1000 && separation < 5) {
 					// Set color based on distance
-					if (separation < 3)
+					if (separation < 3) {
 						gg.setColor(new Color(255, 0, 0));
+					}
 					else {
 						// Draw current separation
 						String separationStr = Double.toString(Math.round(separation * 10) / 10.0);
@@ -248,6 +258,7 @@ public class Airport extends JComponent implements MouseListener {
 				this.aircraft[i] = null;
 				if (this.selected == aircraft)
 					this.selected = null;
+				this.flights++;
 			}
 		}
 

@@ -6,6 +6,12 @@
 ### Fixed
 ### Changed
 
+## [0.1.8] - 3/20/23
+### Added
+* Added basic main menu
+### Fixed
+### Changed
+
 ## [0.1.7] - 3/20/23
 ### Added
 * Selected aircraft draws a line to its target

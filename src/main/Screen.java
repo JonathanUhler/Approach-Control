@@ -3,6 +3,7 @@ import javax.swing.JButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JLabel;
+import javax.swing.JComboBox;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Color;
@@ -15,10 +16,16 @@ public class Screen extends JPanel {
 	public static final Color RADAR_COLOR = new Color(130, 240, 70);
 	public static final int FRAME_RATE = 30;
 
+
+	// Main menu components
+	private JComboBox<Airport.Code> airportComboBox;
+	private JButton playButton;
+	
 	
 	// Game settings and components
 	private JSpinner gameSpeedSpinner;
 	private JButton toggleSepRingsButton;
+	private JLabel scoreLabel;
 	private static int gameSpeed = 1;
 	private static boolean showSepRings = false;
 	
@@ -50,23 +57,28 @@ public class Screen extends JPanel {
 		this.screenHeight = 600 + this.settingsMargin;
 		this.calculateConstants();
 
-		// Components
+		// Main menu components
+		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK});
+		this.playButton = new JButton("Start");
+
+		this.playButton.addActionListener(e -> {
+				this.airport = new Airport((Airport.Code) this.airportComboBox.getSelectedItem());
+				this.displayGame();
+			});
+
+		// Game components
 		this.gameSpeedSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 		this.toggleSepRingsButton = new JButton("Toggle Sep Rings");
+		this.scoreLabel = new JLabel();
 
 		this.gameSpeedSpinner.addChangeListener(e -> Screen.gameSpeed = (Integer) this.gameSpeedSpinner.getValue());
 		this.toggleSepRingsButton.addActionListener(e -> Screen.showSepRings = !Screen.showSepRings);
 
-		this.add(new JLabel("Game Speed: "));
-		this.add(this.gameSpeedSpinner);
-		this.add(this.toggleSepRingsButton);
-
 		// Game objects
 		this.controls = null;
 
-		// TEST CODE
-		this.airport = new Airport(Airport.Code.KJFK);
-		this.add(this.airport);
+		// Display main menu
+		this.displayMain();
 	}
 
 
@@ -95,9 +107,38 @@ public class Screen extends JPanel {
 	}
 
 
+	private void clear() {
+		this.removeAll();
+		this.revalidate();
+		this.repaint();
+	}
+
+
+	private void displayMain() {
+		this.clear();
+
+		this.add(this.airportComboBox);
+		this.add(this.playButton);
+	}
+
+
+	private void displayGame() {
+		this.clear();
+
+		this.add(this.airport);
+		this.add(this.scoreLabel);
+		this.add(new JLabel("          Game Speed: "));
+		this.add(this.gameSpeedSpinner);
+		this.add(this.toggleSepRingsButton);
+	}
+
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		if (this.airport == null)
+			return;
 
 		// Background
 		this.setBackground(new Color(150, 150, 150));
@@ -111,28 +152,33 @@ public class Screen extends JPanel {
 			this.controls.setBounds(this.controlsOffsetX, this.controlsOffsetY,
 									this.controlsWidth, this.controlsHeight);
 
-		// TEST CODE
+		// Update score
+		this.scoreLabel.setText("Flights: " + this.airport.getFlights());
+
+		// Update airport size as needed
 		this.airport.setBounds(this.radarOffsetX, this.radarOffsetY, this.radarWidth, this.radarHeight);
 	}
 
 
 	public void update() {
-		while (true) {
+		while (true) {			
 			long startMillis = System.currentTimeMillis();
 
 			// Update the displayed controls
-			Aircraft selected = this.airport.getSelected();
-			if (selected == null && this.controls != null) {
-				this.remove(this.controls);
-				this.controls = null;
-			}
-			else if (selected != null) {
-				Controls controls = selected.getControls();
-				if (this.controls != null)
+			if (this.airport != null) {
+				Aircraft selected = this.airport.getSelected();
+				if (selected == null && this.controls != null) {
 					this.remove(this.controls);
-				this.controls = controls;
-				if (this.controls != null)
-					this.add(this.controls);
+					this.controls = null;
+				}
+				else if (selected != null) {
+					Controls controls = selected.getControls();
+					if (this.controls != null)
+						this.remove(this.controls);
+					this.controls = controls;
+					if (this.controls != null)
+						this.add(this.controls);
+				}
 			}
 
 			this.repaint();

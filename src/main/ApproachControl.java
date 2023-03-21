@@ -8,11 +8,9 @@ import java.awt.Dimension;
   TO-DO
 
   - Game loop
-	- Point/score system
-	  - (-) for: having an aircraft leave airspace w/o being cleared, separation
-	  - (+) for: processing (landing/handing off) aircraft successfully 
+	- Losing: having an aircraft leave airspace w/o being cleared, separation
   - More airports
-  - Home/main screen (?)
+  - Home/main screen
   - In-file documentation
  */
 
