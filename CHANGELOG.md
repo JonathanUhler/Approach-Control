@@ -6,6 +6,14 @@
 ### Fixed
 ### Changed
 
+## [0.1.9] - 3/24/23
+### Added
+* Added end condition if aircraft leave the radar area or violate separation requirements
+* Added KSFO, still work-in-progress
+### Fixed
+### Changed
+* Improved main menu
+
 ## [0.1.8] - 3/20/23
 ### Added
 * Added basic main menu

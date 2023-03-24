@@ -289,7 +289,7 @@ public class Aircraft {
 		// Draw separation circle of 1.5 mile radius
 		if (Screen.showSepRings()) {
 			int pxPerMile = Airport.pxPerMile();
-			gg.setColor(new Color(255, 0, 0));
+			gg.setColor(new Color(220, 220, 220));
 			gg.draw(new Ellipse2D.Double(pxX - pxPerMile * 1.5, pxY - pxPerMile * 1.5, pxPerMile * 3, pxPerMile * 3));
 		}
 

@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Font;
 
 
 public class Screen extends JPanel {
@@ -58,7 +59,7 @@ public class Screen extends JPanel {
 		this.calculateConstants();
 
 		// Main menu components
-		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK});
+		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK, Airport.Code.KSFO});
 		this.playButton = new JButton("Start");
 
 		this.playButton.addActionListener(e -> {
@@ -67,7 +68,7 @@ public class Screen extends JPanel {
 			});
 
 		// Game components
-		this.gameSpeedSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+		this.gameSpeedSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 10, 1));
 		this.toggleSepRingsButton = new JButton("Toggle Sep Rings");
 		this.scoreLabel = new JLabel();
 
@@ -137,26 +138,60 @@ public class Screen extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		if (this.airport == null)
-			return;
-
 		// Background
 		this.setBackground(new Color(150, 150, 150));
 		g.fillRect(this.margin, this.margin + this.settingsMargin,
 				   this.effectiveScreenWidth, this.effectiveScreenHeight);
-		g.setColor(new Color(150, 150, 150));
-		g.fillRect(this.radarOffsetX + this.radarWidth, this.settingsMargin, this.margin, this.screenHeight);
 
-		// Controls
-		if (this.controls != null)
-			this.controls.setBounds(this.controlsOffsetX, this.controlsOffsetY,
-									this.controlsWidth, this.controlsHeight);
+		// Draw main menu
+		if (this.airport == null) {
+			// Grid background
+			g.setColor(Screen.RADAR_COLOR.darker().darker().darker());
+			for (int i = this.margin; i <= this.effectiveScreenWidth + this.margin; i += this.margin)
+				g.drawLine(i, this.margin + this.settingsMargin,
+						   i, this.margin + this.settingsMargin + this.effectiveScreenHeight);
+			for (int i = this.margin; i <= this.effectiveScreenHeight + this.margin; i += this.margin)
+				g.drawLine(this.margin, i + this.settingsMargin,
+						   this.margin + this.effectiveScreenWidth, i + this.settingsMargin);
 
-		// Update score
-		this.scoreLabel.setText("Flights: " + this.airport.getFlights());
-
-		// Update airport size as needed
-		this.airport.setBounds(this.radarOffsetX, this.radarOffsetY, this.radarWidth, this.radarHeight);
+			// Title
+			g.setFont(new Font("Courier New", Font.BOLD, Math.min(this.screenWidth, this.screenHeight) / 10));
+			g.setColor(Screen.RADAR_COLOR);
+			String titleStr = "Approach Control";
+			int titleW = g.getFontMetrics().stringWidth(titleStr);
+			int titleX = (this.screenWidth - titleW) / 2;
+			g.drawString(titleStr, titleX, this.screenHeight / 2);
+		}
+		// Draw game
+		else {
+			// Background
+			g.setColor(new Color(150, 150, 150));
+			g.fillRect(this.radarOffsetX + this.radarWidth, this.settingsMargin, this.margin, this.screenHeight);
+			
+			// Controls
+			if (this.controls != null)
+				this.controls.setBounds(this.controlsOffsetX, this.controlsOffsetY,
+										this.controlsWidth, this.controlsHeight);
+			
+			// Update score
+			this.scoreLabel.setText("Flights: " + this.airport.getFlights());
+			
+			// Update airport size as needed
+			this.airport.setBounds(this.radarOffsetX, this.radarOffsetY, this.radarWidth, this.radarHeight);
+			
+			// Game over screen
+			if (this.airport.hasConflict()) {
+				Screen.gameSpeed = 0;
+				g.setColor(new Color(255, 0, 0));
+				g.setFont(new Font("Courier New", Font.BOLD,
+								   Math.min(this.radarWidth, this.radarHeight) / 10));
+				
+				String conflictStr = "Conflict!";
+				int conflictStrW = g.getFontMetrics().stringWidth(conflictStr);
+				int conflictStrX = this.radarOffsetX + (this.radarWidth - conflictStrW) / 2;
+				g.drawString(conflictStr, conflictStrX, this.radarOffsetY + this.radarHeight / 2);
+			}
+		}
 	}
 
 

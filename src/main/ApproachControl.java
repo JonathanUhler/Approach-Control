@@ -6,18 +6,14 @@ import java.awt.Dimension;
 
 /*
   TO-DO
-
-  - Game loop
-	- Losing: having an aircraft leave airspace w/o being cleared, separation
   - More airports
-  - Home/main screen
   - In-file documentation
  */
 
 
 /*
   References
-  - https://www.youtube.com/watch?v=He6PDSR4qFk&t=30s&ab_channel=PlasticPilot
+  - https://www.youtube.com/watch?v=He6PDSR4qFk
   - channel APPcalyptus
   - https://twitter.com/APPControl
 */

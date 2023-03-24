@@ -11,7 +11,8 @@ import java.awt.event.MouseEvent;
 public class Airport extends JComponent implements MouseListener {
 
 	public static enum Code {
-		KJFK
+		KJFK,
+		KSFO
 	}
 	
 
@@ -30,6 +31,7 @@ public class Airport extends JComponent implements MouseListener {
 
 	// Score information
 	private int flights;
+	private boolean hasConflict;
 
 
 	public Airport(Code icao) {
@@ -50,6 +52,7 @@ public class Airport extends JComponent implements MouseListener {
 		this.calculateConstants();
 		this.aircraft = new Aircraft[this.waypoints.length];
 		this.flights = 0;
+		this.hasConflict = false;
 
 		// Check that the call to initialize() was successful for this icao
 		if (this.acPerMin <= 0)
@@ -77,6 +80,16 @@ public class Airport extends JComponent implements MouseListener {
 				new Airway("MHT", 180, 3 * this.radarRange / 5, 1),
 				new Airway("ACK", 270, this.radarRange - 1,     2 * this.radarRange / 5),
 				new Airway("DNY", 0,   2 * this.radarRange / 5, this.radarRange - 1)
+			};
+			break;
+		case KSFO:
+			this.acPerMin = 0.9;
+			this.inbound = new Waypoint[] {
+				new Runway("28L", this.radarRange / 2 + 0.14, this.radarRange / 2 + 0.22, 11381, 280),
+				new Runway("28R", this.radarRange / 2, this.radarRange / 2, 11870, 280)
+			};
+			this.outbound = new Waypoint[] {
+				
 			};
 			break;
 		default:
@@ -107,6 +120,11 @@ public class Airport extends JComponent implements MouseListener {
 
 	public int getFlights() {
 		return this.flights;
+	}
+
+
+	public boolean hasConflict() {
+		return this.hasConflict;
 	}
 
 
@@ -169,9 +187,10 @@ public class Airport extends JComponent implements MouseListener {
 	}
 
 
-	private void checkSeparation(Graphics g) {
+	private boolean checkSeparation(Graphics g) {
 		Graphics2D gg = (Graphics2D) g.create();
 		gg.setFont(new Font("Courier New", Font.BOLD, (int) (Airport.pxPerMile * 0.7)));
+		boolean hasSeparation = true;
 		
 		for (int i = 0; i < this.aircraft.length; i++) {
 			for (int j = i + 1; j < this.aircraft.length; j++) {
@@ -195,6 +214,7 @@ public class Airport extends JComponent implements MouseListener {
 					// Set color based on distance
 					if (separation < 3) {
 						gg.setColor(new Color(255, 0, 0));
+						hasSeparation = false;
 					}
 					else {
 						// Draw current separation
@@ -222,6 +242,9 @@ public class Airport extends JComponent implements MouseListener {
 
 		// Dispose graphics copy
 		gg.dispose();
+
+		// Return status
+		return hasSeparation;
 	}
 
 
@@ -244,6 +267,7 @@ public class Airport extends JComponent implements MouseListener {
 		}
 
 		// Draw aircraft
+		boolean aircraftLost = false;
 		for (int i = 0; i < this.aircraft.length; i++) {
 			Aircraft aircraft = this.aircraft[i];
 			if (aircraft == null)
@@ -260,10 +284,22 @@ public class Airport extends JComponent implements MouseListener {
 					this.selected = null;
 				this.flights++;
 			}
+			
+			// Check if this aircraft has left the airspace uncleared
+			double aircraftX = aircraft.getX();
+			double aircraftY = aircraft.getY();
+			if (!aircraft.isCleared() &&
+				(aircraftX < 0 || aircraftX > this.radarRange ||
+				 aircraftY < 0 || aircraftY > this.radarRange))
+				aircraftLost = true;
 		}
 
 		// Check separation, drawing warning lines as needed
-		this.checkSeparation(g);
+		boolean hasSeparation = this.checkSeparation(g);
+
+		// Check for failure condition
+		if (!hasSeparation || aircraftLost)
+			this.hasConflict = true;
 
 		// Add new aircraft based on the number of aircraft (ac) per minute for this airport
 		double secPerAC = (1 / this.acPerMin) * 60;
