@@ -12,17 +12,35 @@ import java.awt.event.MouseEvent;
 public class Airport extends JComponent implements MouseListener {
 
 	public static enum Code {
-		KJFK,
-		KSFO
+		KJFK(false),
+		KSFO(false),
+		EGLL(false),
+		KPAO(true);
+
+
+		private boolean makeGA;
+		
+
+		private Code(boolean makeGA) {
+			this.makeGA = makeGA;
+		}
+
+
+		public boolean isGA() {
+			return this.makeGA;
+		}
+		
 	}
 	
 
 	// Display information
-	private final int radarRange = 40; // In nm
 	private static int pxPerMile;
 
 	// Airport information
-	private Code icao;
+	private Code code;
+	private int radarRange; // In nm
+	private int vertSeparation; // In ft
+	private int horizSeparation; // In nm
 	private double acPerMin;
 	private Aircraft selected;
 	private Aircraft[] aircraft;
@@ -35,16 +53,21 @@ public class Airport extends JComponent implements MouseListener {
 	private boolean hasConflict;
 
 
-	public Airport(Code icao) {
+	public Airport(Code code) {
 		this.setFocusable(true);
 		this.addMouseListener(this);
 
-		// Initialize airport information
-		if (icao == null)
-			throw new NullPointerException("icao code cannot be null");
-		this.icao = icao;
+		// Initialize code information
+		if (code == null)
+			throw new NullPointerException("code code cannot be null");
+		this.code = code;
+		this.radarRange = (!this.code.isGA()) ? 40 : 20;
+		this.vertSeparation = (!this.code.isGA()) ? 1000 : 500;
+		this.horizSeparation = (!this.code.isGA()) ? 3 : 1;
+
+		// Initialize waypoint/aircraft information
 		this.selected = null;
-		this.initialize(icao);
+		this.initialize(code);
 		this.waypoints = new Waypoint[this.inbound.length + this.outbound.length];
 		for (int i = 0; i < this.outbound.length; i++)
 			this.waypoints[i] = this.outbound[i];
@@ -55,9 +78,9 @@ public class Airport extends JComponent implements MouseListener {
 		this.flights = 0;
 		this.hasConflict = false;
 
-		// Check that the call to initialize() was successful for this icao
+		// Check that the call to initialize() was successful for this code
 		if (this.acPerMin <= 0)
-			throw new IllegalArgumentException("acPerMin not initialized correctly for icao " + this.icao.name());
+			throw new IllegalArgumentException("acPerMin not initialized correctly for code " + this.code.name());
 
 		// Add starting aircraft
 		int minAircraft = 1;
@@ -68,13 +91,13 @@ public class Airport extends JComponent implements MouseListener {
 	}
 
 
-	private void initialize(Code icao) {
-		switch (icao) {
+	private void initialize(Code code) {
+		switch (code) {
 		case KJFK:
 			this.acPerMin = 0.6;
 			this.inbound = new Waypoint[] {
-				new Runway("13L", this.radarRange / 2 + 1.23, this.radarRange / 2 - 0.58, 10000, 130),
-				new Runway("13R", this.radarRange / 2, this.radarRange / 2, 14511, 130)
+				new Runway("13L", this.radarRange / 2 + 1.23, this.radarRange / 2 - 0.58, 10000),
+				new Runway("13R", this.radarRange / 2, this.radarRange / 2, 14511)
 			};
 			this.outbound = new Waypoint[] {
 				new Airway("ALB", 180, this.radarRange / 5,     1),
@@ -86,15 +109,41 @@ public class Airport extends JComponent implements MouseListener {
 		case KSFO:
 			this.acPerMin = 0.9;
 			this.inbound = new Waypoint[] {
-				new Runway("28L", this.radarRange / 2 + 0.14, this.radarRange / 2 + 0.22, 11381, 280),
-				new Runway("28R", this.radarRange / 2, this.radarRange / 2, 11870, 280)
+				new Runway("28R", this.radarRange / 2, this.radarRange / 2, 11870),
+				new Runway("28L", this.radarRange / 2 + 0.14 * 5, this.radarRange / 2 + 0.22 * 5, 11381)
 			};
 			this.outbound = new Waypoint[] {
-				
+				new Airway("RNO", 220, this.radarRange - 1, 1),
+				new Airway("LAX", 290, this.radarRange - 1, this.radarRange - 1),
+				new Airway("HNL", 90,  1,                   this.radarRange / 2)
+			};
+			break;
+		case EGLL:
+			this.acPerMin = 1.33;
+			this.inbound = new Waypoint[] {
+				new Runway("27R", this.radarRange / 2, this.radarRange / 2, 12802),
+				new Runway("27L", this.radarRange / 2, this.radarRange / 2 + 0.76, 12008)
+			};
+			this.outbound = new Waypoint[] {
+				new Airway("JFK", 90, 1,                        this.radarRange - 1),
+				new Airway("TFM", 270, this.radarRange - 1,     this.radarRange - 1),
+				new Airway("DDF", 290, this.radarRange - 1,     5 * this.radarRange / 8),
+				new Airway("FPG", 340, 2 * this.radarRange / 3, this.radarRange - 1)
+			};
+			break;
+		case KPAO:
+			this.acPerMin = 0.36;
+			this.inbound = new Waypoint[] {
+				new Runway("31", this.radarRange / 2, this.radarRange / 2, 2443)
+			};
+			this.outbound = new Waypoint[] {
+				new Airway("SQL", 100, 1,                       this.radarRange / 4),
+				new Airway("SJC", 280, this.radarRange - 1,     3 * this.radarRange / 4),
+				new Airway("LVK", 190, 4 * this.radarRange / 5, 1)
 			};
 			break;
 		default:
-			throw new IllegalArgumentException("invalid icao code " + icao.name());
+			throw new IllegalArgumentException("invalid code code " + code.name());
 		}
 	}
 
@@ -145,17 +194,17 @@ public class Airport extends JComponent implements MouseListener {
 		// Get origin waypoint
 		Waypoint origin = this.waypoints[(int) (Math.random() * this.waypoints.length)];
 		if (origin == null)
-			throw new NullPointerException("waypoint cannot be null, for icao " + this.icao.name());
+			throw new NullPointerException("waypoint cannot be null, for code " + this.code.name());
 
 		// Get target waypoint
 		Waypoint target = origin instanceof Runway ?
 			this.outbound[(int) (Math.random() * this.outbound.length)] :
 			this.inbound[(int) (Math.random() * this.inbound.length)];
 		if (target == null)
-			throw new NullPointerException("waypoint cannot be null, for icao " + this.icao.name());
+			throw new NullPointerException("waypoint cannot be null, for code " + this.code.name());
 
 		// Add aircraft
-		Aircraft a = new Aircraft(target);
+		Aircraft a = new Aircraft(target, this.code.isGA());
 		int hdg = origin.getExitHdg();
 		a.setCurrentHdg(hdg);
 		a.setLocation(origin.getX(), origin.getY());
@@ -180,7 +229,7 @@ public class Airport extends JComponent implements MouseListener {
 			double y2 = aircraft2.getY();
 			double separation = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 
-			if (Math.abs(alt1 - alt2) < 1000 && separation < 3)
+			if (Math.abs(alt1 - alt2) < this.vertSeparation && separation < this.horizSeparation)
 				return false;
 		}
 
@@ -211,9 +260,9 @@ public class Airport extends JComponent implements MouseListener {
 				double separation = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
 				// Conflict detection
-				if (Math.abs(alt1 - alt2) < 1000 && separation < 5) {
+				if (Math.abs(alt1 - alt2) < this.vertSeparation && separation < this.horizSeparation * (5.0 / 3.0)) {
 					// Set color based on distance
-					if (separation < 3) {
+					if (separation < this.horizSeparation) {
 						gg.setColor(new Color(255, 0, 0));
 						hasSeparation = false;
 					}
@@ -299,9 +348,10 @@ public class Airport extends JComponent implements MouseListener {
 
 				// Draw red ring
 				gg.setColor(new Color(255, 0, 0));
-				gg.draw(new Ellipse2D.Double((aircraftX - 1.5) * Airport.pxPerMile,
-											 (aircraftY - 1.5) * Airport.pxPerMile,
-											 Airport.pxPerMile * 3, Airport.pxPerMile * 3));
+				gg.draw(new Ellipse2D.Double((aircraftX - this.horizSeparation / 2.0) * Airport.pxPerMile,
+											 (aircraftY - this.horizSeparation / 2.0) * Airport.pxPerMile,
+											 Airport.pxPerMile * this.horizSeparation,
+											 Airport.pxPerMile * this.horizSeparation));
 			}
 		}
 

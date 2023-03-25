@@ -3,6 +3,47 @@ public class AircraftMath {
 	private AircraftMath() { }
 
 
+	public static String generateFlightNumber(int length) {
+		String str = "";
+		for (int i = 0; i < length; i++)
+			str += (int) (Math.random() * 10);
+		return str;
+	}
+
+
+	public static String generateTailNumber(int length) {
+		String[] symbols = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+							"S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		String str = "";
+		for (int i = 0; i < length; i++)
+			str += symbols[(int) (Math.random() * symbols.length)];
+		return str;
+	}
+
+
+	public static int runwayHdg(String identifier) {
+		// Remove non-numeric characters
+		String cleaned = identifier.replaceAll("[^0-9]", "");
+
+		// Get integer heading
+		int hdg;
+		try {
+			hdg = Integer.parseInt(cleaned);
+		}
+		catch (NumberFormatException e) {
+			throw new IllegalArgumentException("invalid runway identifier: " + identifier);
+		}
+		hdg *= 10;
+
+		// Get heading in range 0 < hdg <= 360 to the nearest 10 degrees
+		int adjusted = (int) AircraftMath.adjustHdg(hdg);
+		if (adjusted == 0)
+			adjusted = 360;
+		adjusted = AircraftMath.round(adjusted, 10);
+		return adjusted;
+	}
+
+
 	public static int round(double current, double interval) {
 		int floor = (int) (((int) current / (int) interval) * (int) interval);
 		int ceil = (int) (floor + interval);

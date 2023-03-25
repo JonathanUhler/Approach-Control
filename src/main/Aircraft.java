@@ -19,33 +19,38 @@ public class Aircraft {
 	public static final int HDG_INTERVAL = 10;
 
 	// Aircraft choices. Units in feet, nm, knots. Data taken from wikipedia "specifications" section
-	private static final Type[] TYPES = {new Type("B721", 42000, 127, 518), new Type("B722", 42000, 127, 515),
-										 new Type("B731", 37000, 150, 473), new Type("B732", 37000, 150, 473),
-										 new Type("B732", 37000, 150, 473), new Type("B733", 37000, 150, 473),
-										 new Type("B734", 37000, 150, 473), new Type("B735", 37000, 150, 473),
-										 new Type("B736", 41000, 150, 453), new Type("B737", 41000, 150, 453),
-										 new Type("B738", 41000, 150, 453), new Type("B739", 41000, 150, 453),
-										 new Type("B752", 42000, 135, 496), new Type("B753", 42000, 135, 496),
-										 new Type("B762", 43100, 150, 486), new Type("B763", 43100, 150, 486),
-										 new Type("B764", 43100, 150, 486), new Type("B772", 43100, 135, 511),
-										 new Type("B773", 43100, 135, 511), new Type("B788", 43100, 140, 516),
-										 new Type("B789", 43100, 153, 516), new Type("A318", 41000, 135, 470),
-										 new Type("A319", 41000, 125, 470), new Type("A320", 41000, 135, 470),
-										 new Type("A321", 41000, 138, 470), new Type("A332", 41000, 140, 470),
-										 new Type("A333", 41000, 146, 470), new Type("A342", 41100, 148, 493),
-										 new Type("A343", 41450, 148, 493), new Type("A345", 41450, 148, 493),
-										 new Type("A345", 41450, 148, 493), new Type("A359", 43100, 140, 488),
-										 new Type("A35K", 41450, 150, 488), new Type("E170", 41000, 130, 430),
-										 new Type("E175", 41000, 130, 430), new Type("E190", 41000, 130, 447),
-										 new Type("E195", 41000, 130, 447), new Type("E110", 21490, 100, 248),
-										 new Type("E120", 29800, 87, 328), new Type("E135", 37000, 110, 450),
-										 new Type("E140", 37000, 120, 450), new Type("E145", 37000, 122, 461)};
+	private static final Type[] CA_TYPES = {new Type("B721", 42000, 127, 518), new Type("B722", 42000, 127, 515),
+											new Type("B731", 37000, 150, 473), new Type("B732", 37000, 150, 473),
+											new Type("B732", 37000, 150, 473), new Type("B733", 37000, 150, 473),
+											new Type("B734", 37000, 150, 473), new Type("B735", 37000, 150, 473),
+											new Type("B736", 41000, 150, 453), new Type("B737", 41000, 150, 453),
+											new Type("B738", 41000, 150, 453), new Type("B739", 41000, 150, 453),
+											new Type("B752", 42000, 135, 496), new Type("B753", 42000, 135, 496),
+											new Type("B762", 43100, 150, 486), new Type("B763", 43100, 150, 486),
+											new Type("B764", 43100, 150, 486), new Type("B772", 43100, 135, 511),
+											new Type("B773", 43100, 135, 511), new Type("B788", 43100, 140, 516),
+											new Type("B789", 43100, 153, 516), new Type("A318", 41000, 135, 470),
+											new Type("A319", 41000, 125, 470), new Type("A320", 41000, 135, 470),
+											new Type("A321", 41000, 138, 470), new Type("A332", 41000, 140, 470),
+											new Type("A333", 41000, 146, 470), new Type("A342", 41100, 148, 493),
+											new Type("A343", 41450, 148, 493), new Type("A345", 41450, 148, 493),
+											new Type("A345", 41450, 148, 493), new Type("A359", 43100, 140, 488),
+											new Type("A35K", 41450, 150, 488), new Type("E170", 41000, 130, 430),
+											new Type("E175", 41000, 130, 430), new Type("E190", 41000, 130, 447),
+											new Type("E195", 41000, 130, 447), new Type("E110", 21490, 100, 248),
+											new Type("E120", 29800, 87, 328),  new Type("E135", 37000, 110, 450),
+											new Type("E140", 37000, 120, 450), new Type("E145", 37000, 122, 461),
+											new Type("CRJ1", 41000, 120, 444), new Type("CRJ2", 41000, 120, 444),
+											new Type("CRJ7", 41000, 130, 460), new Type("CRJ9", 41000, 130, 460),
+											new Type("CRJX", 41000, 130, 460)};
 	private static final String[] AIRLINES = {"DAL", "AAL", "UAL", "DLH", "AFR", "KLM", "SWA", "CSN", "THY", "CES",
 											  "RYR", "UAE", "AFL", "CCA", "QTR", "BAW", "QFA", "COA", "ASA", "EZY"};
+	private static final Type[] GA_TYPES = {new Type("C172", 13000, 47, 163)};
 	
 
 	// Aircraft properties
 	private Type type;
+	private boolean isGA;
 	private String id;
 	private Controls controls;
 	private Waypoint target;
@@ -61,16 +66,24 @@ public class Aircraft {
 	private double x; // In nm
 	private double y; // In nm
 	private double size;
-	
+
 
 	public Aircraft(Waypoint target) {
+		this(target, false);
+	}
+	
+
+	public Aircraft(Waypoint target, boolean makeGA) {
 		if (target == null)
 			throw new NullPointerException("aircraft target cannot be null");
 		
-		// Set aircraft information
-		this.type = Aircraft.TYPES[(int) (Math.random() * Aircraft.TYPES.length)];
-		this.id = Aircraft.AIRLINES[(int) (Math.random() * Aircraft.AIRLINES.length)] + 
-			      "" + ((int) (Math.random() * (9999 - 1000 + 1)) + 1000);
+		// Set aircraft information, depending on whether it should be a commerical or general aviation aircraft
+		this.type = (!makeGA) ? Aircraft.CA_TYPES[(int) (Math.random() * Aircraft.CA_TYPES.length)] :
+			                    Aircraft.GA_TYPES[(int) (Math.random() * Aircraft.GA_TYPES.length)];
+		this.isGA = makeGA;
+		this.id = (!makeGA) ? Aircraft.AIRLINES[(int) (Math.random() * Aircraft.AIRLINES.length)] + 
+			                  AircraftMath.generateFlightNumber(3) :
+			                  "N" + AircraftMath.generateTailNumber(5);
 		this.controls = new Controls(this);
 		this.target = target;
 		this.cleared = false;
@@ -289,8 +302,10 @@ public class Aircraft {
 
 		// Draw separation circle of 1.5 mile radius
 		if (Screen.showSepRings()) {
+			double radius = (!this.isGA) ? 3.0 : 1.0;
 			gg.setColor(new Color(220, 220, 220));
-			gg.draw(new Ellipse2D.Double(pxX - pxPerMile * 1.5, pxY - pxPerMile * 1.5, pxPerMile * 3, pxPerMile * 3));
+			gg.draw(new Ellipse2D.Double(pxX - pxPerMile * radius / 2, pxY - pxPerMile * radius / 2,
+										 pxPerMile * radius, pxPerMile * radius));
 		}
 
 		// Draw information string

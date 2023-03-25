@@ -6,6 +6,14 @@
 ### Fixed
 ### Changed
 
+## [0.2.0] - 3/25/23
+### Added
+* Added support for general aviation airports and aircraft
+* Added London Heathrow and Palo Alto airports
+### Fixed
+### Changed
+* Runways will now automatically determine their heading from the identifier string
+
 ## [0.1.10] - 3/24/23
 ### Added
 * Added red ring around aricraft that leave the radar range for emphasis

@@ -9,8 +9,8 @@ public class Runway extends Waypoint {
 	private double length; // In nm
 	
 
-	public Runway(String identifier, double x, double y, int length, int hdg) {
-		super(identifier, hdg, x, y);
+	public Runway(String identifier, double x, double y, int length) {
+		super(identifier, AircraftMath.runwayHdg(identifier), x, y);
 		this.length = (length) * (1.0 / 6076.0); // Convert from ft to nm
 	}
 

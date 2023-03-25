@@ -14,7 +14,7 @@ public abstract class Waypoint {
 	public Waypoint(String identifier, int exitHdg, double x, double y) {
 		this.identifier = identifier;
 		this.exitHdg = exitHdg;
-		int maxAlt = 4000;
+		int maxAlt = 3000;
 		int minAlt = 0;
 		int alt = (int) (Math.random() * (maxAlt - minAlt + 1)) + minAlt;
 		// Allow clearance when altitude is <= 2000 ft for landing or == max - alt for exiting

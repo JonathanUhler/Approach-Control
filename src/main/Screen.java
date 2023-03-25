@@ -59,7 +59,8 @@ public class Screen extends JPanel {
 		this.calculateConstants();
 
 		// Main menu components
-		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK, Airport.Code.KSFO});
+		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK, Airport.Code.KSFO,
+																   Airport.Code.EGLL, Airport.Code.KPAO});
 		this.playButton = new JButton("Start");
 
 		this.playButton.addActionListener(e -> {
