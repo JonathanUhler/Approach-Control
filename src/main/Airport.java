@@ -2,6 +2,7 @@ import javax.swing.JComponent;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Ellipse2D;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseListener;
@@ -250,15 +251,17 @@ public class Airport extends JComponent implements MouseListener {
 
 	@Override
 	public void paintComponent(Graphics g) {
+		Graphics2D gg = (Graphics2D) g.create();
+		
 		int w = super.getBounds().width;
 		int h = super.getBounds().height;
 
 		// Draw background
-		g.setColor(Screen.RADAR_COLOR.darker().darker().darker().darker());
+		gg.setColor(Screen.RADAR_COLOR.darker().darker().darker().darker());
 	    for (int x = Airport.pxPerMile; x < w; x += Airport.pxPerMile)
-			g.drawLine(x, 0, x, h);
+			gg.drawLine(x, 0, x, h);
 		for (int y = Airport.pxPerMile; y < h; y += Airport.pxPerMile)
-			g.drawLine(0, y, w, y);
+			gg.drawLine(0, y, w, y);
 
 		// Draw waypoints
 		for (Waypoint waypoint : this.waypoints) {
@@ -291,7 +294,15 @@ public class Airport extends JComponent implements MouseListener {
 			if (!aircraft.isCleared() &&
 				(aircraftX < 0 || aircraftX > this.radarRange ||
 				 aircraftY < 0 || aircraftY > this.radarRange))
+			{
 				aircraftLost = true;
+
+				// Draw red ring
+				gg.setColor(new Color(255, 0, 0));
+				gg.draw(new Ellipse2D.Double((aircraftX - 1.5) * Airport.pxPerMile,
+											 (aircraftY - 1.5) * Airport.pxPerMile,
+											 Airport.pxPerMile * 3, Airport.pxPerMile * 3));
+			}
 		}
 
 		// Check separation, drawing warning lines as needed
@@ -306,6 +317,9 @@ public class Airport extends JComponent implements MouseListener {
 		int addChance = (int) (Math.random() * (Screen.FRAME_RATE * secPerAC / Screen.gameSpeed()));
 		if (addChance == 0)
 			this.addAircraft();
+
+		// Dispose graphics copy
+		gg.dispose();
 	}
 
 

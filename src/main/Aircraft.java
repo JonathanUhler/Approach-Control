@@ -253,12 +253,13 @@ public class Aircraft {
 	
 
 	public void paintComponent(Graphics g, boolean selected) {
+		int pxPerMile = Airport.pxPerMile();
 		Graphics2D gg = (Graphics2D) g.create();
 		gg.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
 
 		// Pixel-space information of the aircraft
-		double pxX = this.x * Airport.pxPerMile();
-		double pxY = this.y * Airport.pxPerMile();
+		double pxX = this.x * pxPerMile;
+		double pxY = this.y * pxPerMile;
 		double rad = (90.0 - this.currentHdg) * (Math.PI / 180);
 
 		// Draw body
@@ -278,17 +279,16 @@ public class Aircraft {
 
 		// Draw dotted line to target if this aircraft is selected and it is not under tower's control yet
 		if (selected && this.controls != null) {
-			double targetX = this.target.getTargetX() * Airport.pxPerMile();
-			double targetY = this.target.getTargetY() * Airport.pxPerMile();
+			double targetX = this.target.getTargetX() * pxPerMile;
+			double targetY = this.target.getTargetY() * pxPerMile;
 			gg.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-										 0, new float[] {Airport.pxPerMile() / 2}, Airport.pxPerMile() / 2));
+										 0, new float[] {pxPerMile / 2}, pxPerMile / 2));
 			gg.draw(new Line2D.Double(pxX, pxY, targetX, targetY));
 			gg.setStroke(new BasicStroke(1));
 		}
 
 		// Draw separation circle of 1.5 mile radius
 		if (Screen.showSepRings()) {
-			int pxPerMile = Airport.pxPerMile();
 			gg.setColor(new Color(220, 220, 220));
 			gg.draw(new Ellipse2D.Double(pxX - pxPerMile * 1.5, pxY - pxPerMile * 1.5, pxPerMile * 3, pxPerMile * 3));
 		}

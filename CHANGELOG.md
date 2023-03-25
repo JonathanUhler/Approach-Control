@@ -6,6 +6,12 @@
 ### Fixed
 ### Changed
 
+## [0.1.10] - 3/24/23
+### Added
+* Added red ring around aricraft that leave the radar range for emphasis
+### Fixed
+### Changed
+
 ## [0.1.9] - 3/24/23
 ### Added
 * Added end condition if aircraft leave the radar area or violate separation requirements
