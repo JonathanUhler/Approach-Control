@@ -59,8 +59,10 @@ public class Screen extends JPanel {
 		this.calculateConstants();
 
 		// Main menu components
-		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK, Airport.Code.KSFO,
-																   Airport.Code.EGLL, Airport.Code.KPAO});
+		this.airportComboBox = new JComboBox<>(new Airport.Code[] {Airport.Code.KJFK,
+																   Airport.Code.KSFO,
+																   Airport.Code.EGLL,
+																   Airport.Code.KPAO});
 		this.playButton = new JButton("Start");
 
 		this.playButton.addActionListener(e -> {
@@ -73,8 +75,10 @@ public class Screen extends JPanel {
 		this.toggleSepRingsButton = new JButton("Toggle Sep Rings");
 		this.scoreLabel = new JLabel();
 
-		this.gameSpeedSpinner.addChangeListener(e -> Screen.gameSpeed = (Integer) this.gameSpeedSpinner.getValue());
-		this.toggleSepRingsButton.addActionListener(e -> Screen.showSepRings = !Screen.showSepRings);
+		this.gameSpeedSpinner.addChangeListener(e -> Screen.gameSpeed =
+												(Integer) this.gameSpeedSpinner.getValue());
+		this.toggleSepRingsButton.addActionListener(e ->
+													Screen.showSepRings = !Screen.showSepRings);
 
 		// Game objects
 		this.controls = null;
@@ -148,15 +152,24 @@ public class Screen extends JPanel {
 		if (this.airport == null) {
 			// Grid background
 			g.setColor(Screen.RADAR_COLOR.darker().darker().darker());
-			for (int i = this.margin; i <= this.effectiveScreenWidth + this.margin; i += this.margin)
+			for (int i = this.margin;
+				 i <= this.effectiveScreenWidth + this.margin;
+				 i += this.margin)
+			{
 				g.drawLine(i, this.margin + this.settingsMargin,
 						   i, this.margin + this.settingsMargin + this.effectiveScreenHeight);
-			for (int i = this.margin; i <= this.effectiveScreenHeight + this.margin; i += this.margin)
+			}
+			for (int i = this.margin;
+				 i <= this.effectiveScreenHeight + this.margin;
+				 i += this.margin)
+			{
 				g.drawLine(this.margin, i + this.settingsMargin,
 						   this.margin + this.effectiveScreenWidth, i + this.settingsMargin);
+			}
 
 			// Title
-			g.setFont(new Font("Courier New", Font.BOLD, Math.min(this.screenWidth, this.screenHeight) / 10));
+			g.setFont(new Font("Courier New", Font.BOLD,
+							   Math.min(this.screenWidth, this.screenHeight) / 10));
 			g.setColor(Screen.RADAR_COLOR);
 			String titleStr = "Approach Control";
 			int titleW = g.getFontMetrics().stringWidth(titleStr);
@@ -167,7 +180,8 @@ public class Screen extends JPanel {
 		else {
 			// Background
 			g.setColor(new Color(150, 150, 150));
-			g.fillRect(this.radarOffsetX + this.radarWidth, this.settingsMargin, this.margin, this.screenHeight);
+			g.fillRect(this.radarOffsetX + this.radarWidth,
+					   this.settingsMargin, this.margin, this.screenHeight);
 			
 			// Controls
 			if (this.controls != null)
@@ -178,7 +192,8 @@ public class Screen extends JPanel {
 			this.scoreLabel.setText("Flights: " + this.airport.getFlights());
 			
 			// Update airport size as needed
-			this.airport.setBounds(this.radarOffsetX, this.radarOffsetY, this.radarWidth, this.radarHeight);
+			this.airport.setBounds(this.radarOffsetX, this.radarOffsetY,
+								   this.radarWidth, this.radarHeight);
 			
 			// Game over screen
 			if (this.airport.hasConflict()) {

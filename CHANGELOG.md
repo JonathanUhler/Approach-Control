@@ -6,6 +6,12 @@
 ### Fixed
 ### Changed
 
+## [0.2.1] - 5/5/23
+### Added
+### Fixed
+### Changed
+* Format code and comments to 100 chars
+
 ## [0.2.0] - 3/25/23
 ### Added
 * Added support for general aviation airports and aircraft

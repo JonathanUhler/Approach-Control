@@ -80,7 +80,8 @@ public class Airport extends JComponent implements MouseListener {
 
 		// Check that the call to initialize() was successful for this code
 		if (this.acPerMin <= 0)
-			throw new IllegalArgumentException("acPerMin not initialized correctly for code " + this.code.name());
+			throw new IllegalArgumentException("acPerMin not initialized correctly for code " +
+											   this.code.name());
 
 		// Add starting aircraft
 		int minAircraft = 1;
@@ -110,7 +111,8 @@ public class Airport extends JComponent implements MouseListener {
 			this.acPerMin = 0.9;
 			this.inbound = new Waypoint[] {
 				new Runway("28R", this.radarRange / 2, this.radarRange / 2, 11870),
-				new Runway("28L", this.radarRange / 2 + 0.14 * 5, this.radarRange / 2 + 0.22 * 5, 11381)
+				new Runway("28L", this.radarRange / 2 + 0.14 * 5, this.radarRange / 2 + 0.22 * 5,
+						   11381)
 			};
 			this.outbound = new Waypoint[] {
 				new Airway("RNO", 220, this.radarRange - 1, 1),
@@ -125,10 +127,10 @@ public class Airport extends JComponent implements MouseListener {
 				new Runway("27L", this.radarRange / 2, this.radarRange / 2 + 0.76, 12008)
 			};
 			this.outbound = new Waypoint[] {
-				new Airway("JFK", 90, 1,                        this.radarRange - 1),
-				new Airway("TFM", 270, this.radarRange - 1,     this.radarRange - 1),
-				new Airway("DDF", 290, this.radarRange - 1,     5 * this.radarRange / 8),
-				new Airway("FPG", 340, 2 * this.radarRange / 3, this.radarRange - 1)
+				new Airway("BNN", 180, this.radarRange / 2,     1),
+				new Airway("LAM", 180, 4 * this.radarRange / 5, 1),
+				new Airway("BIG", 0,   4 * this.radarRange / 5, this.radarRange - 1),
+				new Airway("CPT", 90,  1,                       this.radarRange / 2)
 			};
 			break;
 		case KPAO:
@@ -260,7 +262,9 @@ public class Airport extends JComponent implements MouseListener {
 				double separation = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
 				// Conflict detection
-				if (Math.abs(alt1 - alt2) < this.vertSeparation && separation < this.horizSeparation * (5.0 / 3.0)) {
+				if (Math.abs(alt1 - alt2) < this.vertSeparation &&
+					separation < this.horizSeparation * (5.0 / 3.0))
+				{
 					// Set color based on distance
 					if (separation < this.horizSeparation) {
 						gg.setColor(new Color(255, 0, 0));
@@ -271,8 +275,10 @@ public class Airport extends JComponent implements MouseListener {
 						String separationStr = Double.toString(Math.round(separation * 10) / 10.0);
 						int strW = gg.getFontMetrics().stringWidth(separationStr);
 						int strH = gg.getFontMetrics().getHeight();
-						int strX = (int) ((Math.min(x1, x2) + dx / 2) * Airport.pxPerMile) - strW / 2;
-						int strY = (int) ((Math.min(y1, y2) + dy / 2) * Airport.pxPerMile) - strH / 2;
+						int strX =
+							(int) ((Math.min(x1, x2) + dx / 2) * Airport.pxPerMile) - strW / 2;
+						int strY =
+							(int) ((Math.min(y1, y2) + dy / 2) * Airport.pxPerMile) - strH / 2;
 
 						// Draw solid rectangle background with black separation text
 						gg.setColor(Screen.RADAR_COLOR);
@@ -347,9 +353,10 @@ public class Airport extends JComponent implements MouseListener {
 				aircraftLost = true;
 
 				// Draw red ring
+				double sepRingX = (aircraftX - this.horizSeparation / 2.0) * Airport.pxPerMile;
+				double sepRingY = (aircraftY - this.horizSeparation / 2.0) * Airport.pxPerMile;
 				gg.setColor(new Color(255, 0, 0));
-				gg.draw(new Ellipse2D.Double((aircraftX - this.horizSeparation / 2.0) * Airport.pxPerMile,
-											 (aircraftY - this.horizSeparation / 2.0) * Airport.pxPerMile,
+				gg.draw(new Ellipse2D.Double(sepRingX, sepRingY,
 											 Airport.pxPerMile * this.horizSeparation,
 											 Airport.pxPerMile * this.horizSeparation));
 			}

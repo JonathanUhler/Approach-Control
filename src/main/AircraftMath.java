@@ -12,8 +12,9 @@ public class AircraftMath {
 
 
 	public static String generateTailNumber(int length) {
-		String[] symbols = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R",
-							"S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		String[] symbols = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+							"O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1",
+							"2", "3", "4", "5", "6", "7", "8", "9"};
 		String str = "";
 		for (int i = 0; i < length; i++)
 			str += symbols[(int) (Math.random() * symbols.length)];
@@ -55,7 +56,8 @@ public class AircraftMath {
 		int offset = (hdg < 0) ? 360 : -360;
 		while (hdg < 0 || hdg >= 360) {
 			hdg += offset;
-			offset = (hdg < 0) ? 360 : -360; // Recompute offset to prevent runaways from precision error in doubles
+			 // Recompute offset to prevent runaways from precision error in doubles
+			offset = (hdg < 0) ? 360 : -360;
 		}
 		return hdg;
 	}
@@ -80,7 +82,9 @@ public class AircraftMath {
 	}
 
 
-	public static double hdgToTarget(double currentX, double currentY, double targetX, double targetY) {
+	public static double hdgToTarget(double currentX, double currentY,
+									 double targetX, double targetY)
+	{
 	    double directXDist = targetX - currentX;
 		double directYDist = currentY - targetY;
 		double directDist = Math.sqrt(Math.pow(directXDist, 2) + Math.pow(directYDist, 2));

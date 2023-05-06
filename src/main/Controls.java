@@ -63,7 +63,8 @@ public class Controls extends JComponent implements MouseListener {
 		this.compassOffsetY = this.margin;
 		this.textOffsetY = this.compassSize + this.margin * 2 + this.strHeight;
 		this.textHeight = (this.h - this.margin) - this.textOffsetY;
-		this.directToOffsetX = this.compassOffsetX + (this.compassSize / 2) - (this.directToWidth / 2);
+		this.directToOffsetX =
+			this.compassOffsetX + (this.compassSize / 2) - (this.directToWidth / 2);
 		this.directToOffsetY = this.compassOffsetY + (this.compassSize / 4);
 	}
 	
@@ -75,7 +76,8 @@ public class Controls extends JComponent implements MouseListener {
 		this.strHeight = g.getFontMetrics().getHeight();
 		
 		Color radarColor = Screen.RADAR_COLOR;
-		Color lightRadarColor = new Color(radarColor.getRed(), radarColor.getGreen(), radarColor.getBlue(), 100);
+		Color lightRadarColor =
+			new Color(radarColor.getRed(), radarColor.getGreen(), radarColor.getBlue(), 100);
 		g.setColor(radarColor);
 
 		
@@ -88,9 +90,10 @@ public class Controls extends JComponent implements MouseListener {
 				str = "360";
 			str = String.format("%3s", str).replace(" ", "0");
 
-			// Draw string in the correct place, using the unit circle. The x/y positions both have the offset
-			// compassOffset_ + compassRadius which shifts to where the compass should be drawn (that is
-			// compassOffset_) and then adds the radius which is the origin of the unit circle operation.
+			// Draw string in the correct place, using the unit circle. The x/y positions both
+			// have the offset compassOffset_ + compassRadius which shifts to where the compass
+			// should be drawn (that is compassOffset_) and then adds the radius which is the
+			// origin of the unit circle operation.
 			double rad = AircraftMath.hdgToRad(hdg);
 			int x = (int) (compassRadius * Math.cos(rad));
 			int y = (int) (compassRadius * Math.sin(rad));
@@ -99,16 +102,22 @@ public class Controls extends JComponent implements MouseListener {
 
 			// Only draw every third heading number, otherwise draw a dot
 			if (hdg % (Aircraft.HDG_INTERVAL * 3) == 0)
-				g.drawString(str, x - (g.getFontMetrics().stringWidth(str) / 2), y + this.strHeight / 3);
+				g.drawString(str,
+							 x - (g.getFontMetrics().stringWidth(str) / 2),
+							 y + this.strHeight / 3);
 			else
 				g.drawOval(x, y, this.compassSize / 70, this.compassSize / 70);
 		}
 
 		// Draw compass arrow
 		double rad = AircraftMath.hdgToRad(this.owner.getTargetHdg());
-		Point arrowOrigin = new Point(this.compassOffsetX + compassRadius, this.compassOffsetY + compassRadius);
-		Point arrowTerminal = new Point((int) (compassRadius * Math.cos(rad)), (int) (compassRadius * Math.sin(rad)));
-		g.drawLine(arrowOrigin.x, arrowOrigin.y, arrowOrigin.x + arrowTerminal.x, arrowOrigin.y - arrowTerminal.y);
+		Point arrowOrigin = new Point(this.compassOffsetX + compassRadius,
+									  this.compassOffsetY + compassRadius);
+		Point arrowTerminal = new Point((int) (compassRadius * Math.cos(rad)),
+										(int) (compassRadius * Math.sin(rad)));
+		g.drawLine(arrowOrigin.x, arrowOrigin.y,
+				   arrowOrigin.x + arrowTerminal.x,
+				   arrowOrigin.y - arrowTerminal.y);
 
 		// Draw "direct to" button
 		String directToStr = "Cleared " + this.owner.getTarget();
@@ -119,7 +128,9 @@ public class Controls extends JComponent implements MouseListener {
 		g.drawRect(this.directToOffsetX, this.directToOffsetY, this.directToWidth, this.strHeight);
 		if (!this.owner.canBeCleared())
 			g.setColor(radarColor.darker().darker());
-		g.drawString(directToStr, this.directToOffsetX, this.directToOffsetY + (int) (this.strHeight * 0.8));
+		g.drawString(directToStr,
+					 this.directToOffsetX,
+					 this.directToOffsetY + (int) (this.strHeight * 0.8));
 		
 
 		// Draw airspeed and altitude spinners
@@ -141,7 +152,8 @@ public class Controls extends JComponent implements MouseListener {
 			// Draw string and box if needed
 			g.drawString(str, this.margin, spdY);
 			if (spd == (int) this.owner.getTargetSpd())
-				g.drawRect(this.margin, spdY - (int) (this.strHeight * 0.8), textWidth, this.strHeight);
+				g.drawRect(this.margin, spdY - (int) (this.strHeight * 0.8),
+						   textWidth, this.strHeight);
 			spdY += spdMargin;
 		}
 

@@ -19,32 +19,56 @@ public class Aircraft {
 	public static final int HDG_INTERVAL = 10;
 
 	// Aircraft choices. Units in feet, nm, knots. Data taken from wikipedia "specifications" section
-	private static final Type[] CA_TYPES = {new Type("B721", 42000, 127, 518), new Type("B722", 42000, 127, 515),
-											new Type("B731", 37000, 150, 473), new Type("B732", 37000, 150, 473),
-											new Type("B732", 37000, 150, 473), new Type("B733", 37000, 150, 473),
-											new Type("B734", 37000, 150, 473), new Type("B735", 37000, 150, 473),
-											new Type("B736", 41000, 150, 453), new Type("B737", 41000, 150, 453),
-											new Type("B738", 41000, 150, 453), new Type("B739", 41000, 150, 453),
-											new Type("B752", 42000, 135, 496), new Type("B753", 42000, 135, 496),
-											new Type("B762", 43100, 150, 486), new Type("B763", 43100, 150, 486),
-											new Type("B764", 43100, 150, 486), new Type("B772", 43100, 135, 511),
-											new Type("B773", 43100, 135, 511), new Type("B788", 43100, 140, 516),
-											new Type("B789", 43100, 153, 516), new Type("A318", 41000, 135, 470),
-											new Type("A319", 41000, 125, 470), new Type("A320", 41000, 135, 470),
-											new Type("A321", 41000, 138, 470), new Type("A332", 41000, 140, 470),
-											new Type("A333", 41000, 146, 470), new Type("A342", 41100, 148, 493),
-											new Type("A343", 41450, 148, 493), new Type("A345", 41450, 148, 493),
-											new Type("A345", 41450, 148, 493), new Type("A359", 43100, 140, 488),
-											new Type("A35K", 41450, 150, 488), new Type("E170", 41000, 130, 430),
-											new Type("E175", 41000, 130, 430), new Type("E190", 41000, 130, 447),
-											new Type("E195", 41000, 130, 447), new Type("E110", 21490, 100, 248),
-											new Type("E120", 29800, 87, 328),  new Type("E135", 37000, 110, 450),
-											new Type("E140", 37000, 120, 450), new Type("E145", 37000, 122, 461),
-											new Type("CRJ1", 41000, 120, 444), new Type("CRJ2", 41000, 120, 444),
-											new Type("CRJ7", 41000, 130, 460), new Type("CRJ9", 41000, 130, 460),
+	private static final Type[] CA_TYPES = {new Type("B721", 42000, 127, 518),
+											new Type("B722", 42000, 127, 515),
+											new Type("B731", 37000, 150, 473),
+											new Type("B732", 37000, 150, 473),
+											new Type("B732", 37000, 150, 473),
+											new Type("B733", 37000, 150, 473),
+											new Type("B734", 37000, 150, 473),
+											new Type("B735", 37000, 150, 473),
+											new Type("B736", 41000, 150, 453),
+											new Type("B737", 41000, 150, 453),
+											new Type("B738", 41000, 150, 453),
+											new Type("B739", 41000, 150, 453),
+											new Type("B752", 42000, 135, 496),
+											new Type("B753", 42000, 135, 496),
+											new Type("B762", 43100, 150, 486),
+											new Type("B763", 43100, 150, 486),
+											new Type("B764", 43100, 150, 486),
+											new Type("B772", 43100, 135, 511),
+											new Type("B773", 43100, 135, 511),
+											new Type("B788", 43100, 140, 516),
+											new Type("B789", 43100, 153, 516),
+											new Type("A318", 41000, 135, 470),
+											new Type("A319", 41000, 125, 470),
+											new Type("A320", 41000, 135, 470),
+											new Type("A321", 41000, 138, 470),
+											new Type("A332", 41000, 140, 470),
+											new Type("A333", 41000, 146, 470),
+											new Type("A342", 41100, 148, 493),
+											new Type("A343", 41450, 148, 493),
+											new Type("A345", 41450, 148, 493),
+											new Type("A345", 41450, 148, 493),
+											new Type("A359", 43100, 140, 488),
+											new Type("A35K", 41450, 150, 488),
+											new Type("E170", 41000, 130, 430),
+											new Type("E175", 41000, 130, 430),
+											new Type("E190", 41000, 130, 447),
+											new Type("E195", 41000, 130, 447),
+											new Type("E110", 21490, 100, 248),
+											new Type("E120", 29800, 87, 328),
+											new Type("E135", 37000, 110, 450),
+											new Type("E140", 37000, 120, 450),
+											new Type("E145", 37000, 122, 461),
+											new Type("CRJ1", 41000, 120, 444),
+											new Type("CRJ2", 41000, 120, 444),
+											new Type("CRJ7", 41000, 130, 460),
+											new Type("CRJ9", 41000, 130, 460),
 											new Type("CRJX", 41000, 130, 460)};
-	private static final String[] AIRLINES = {"DAL", "AAL", "UAL", "DLH", "AFR", "KLM", "SWA", "CSN", "THY", "CES",
-											  "RYR", "UAE", "AFL", "CCA", "QTR", "BAW", "QFA", "COA", "ASA", "EZY"};
+	private static final String[] AIRLINES = {"DAL", "AAL", "UAL", "DLH", "AFR", "KLM", "SWA",
+											  "CSN", "THY", "CES", "RYR", "UAE", "AFL", "CCA",
+											  "QTR", "BAW", "QFA", "COA", "ASA", "EZY"};
 	private static final Type[] GA_TYPES = {new Type("C172", 13000, 47, 163)};
 	
 
@@ -77,9 +101,12 @@ public class Aircraft {
 		if (target == null)
 			throw new NullPointerException("aircraft target cannot be null");
 		
-		// Set aircraft information, depending on whether it should be a commerical or general aviation aircraft
-		this.type = (!makeGA) ? Aircraft.CA_TYPES[(int) (Math.random() * Aircraft.CA_TYPES.length)] :
-			                    Aircraft.GA_TYPES[(int) (Math.random() * Aircraft.GA_TYPES.length)];
+		// Set aircraft information, depending on whether it should be a commerical or
+		// general aviation aircraft
+		this.type =
+			(!makeGA) ?
+			Aircraft.CA_TYPES[(int) (Math.random() * Aircraft.CA_TYPES.length)] :
+			Aircraft.GA_TYPES[(int) (Math.random() * Aircraft.GA_TYPES.length)];
 		this.isGA = makeGA;
 		this.id = (!makeGA) ? Aircraft.AIRLINES[(int) (Math.random() * Aircraft.AIRLINES.length)] + 
 			                  AircraftMath.generateFlightNumber(3) :
@@ -101,7 +128,10 @@ public class Aircraft {
 		// Outgoing/takeoff traffic: min <= y_target <= max / 3
 		int minEndAlt = this.type.minAlt;
 		int maxEndAlt = Math.max((this.type.maxAlt / 3), minEndAlt);
-		int endAlt = landing ? (int) this.currentAlt : (int) (Math.random() * (maxEndAlt - minEndAlt + 1) + minEndAlt);
+		int endAlt =
+			landing ?
+			(int) this.currentAlt :
+			(int) (Math.random() * (maxEndAlt - minEndAlt + 1) + minEndAlt);
 		this.targetAlt = AircraftMath.round(endAlt, Aircraft.ALT_INTERVAL);
 
 		// Set speed
@@ -135,7 +165,8 @@ public class Aircraft {
 
 		// Check for approach position. If true, "pass" control to tower
 		if (this.target instanceof Runway && this.cleared &&
-			this.target.inTargetRange(this.x, this.y) && this.target.atAlt(this.currentAlt, this.type.maxAlt))
+			this.target.inTargetRange(this.x, this.y) &&
+			this.target.atAlt(this.currentAlt, this.type.maxAlt))
 		{
 			// Set some basic information, heading will be updated in Aircraft::update
 			this.controls = null; // Prevent takeover
@@ -268,7 +299,8 @@ public class Aircraft {
 	public void paintComponent(Graphics g, boolean selected) {
 		int pxPerMile = Airport.pxPerMile();
 		Graphics2D gg = (Graphics2D) g.create();
-		gg.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+		gg.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+												RenderingHints.VALUE_ANTIALIAS_ON));
 
 		// Pixel-space information of the aircraft
 		double pxX = this.x * pxPerMile;
@@ -290,7 +322,8 @@ public class Aircraft {
 		// Undo changes to graphics angle
 		gg.rotate(rad, pxX, pxY);
 
-		// Draw dotted line to target if this aircraft is selected and it is not under tower's control yet
+		// Draw dotted line to target if this aircraft is selected and it is not under
+		// tower's control yet
 		if (selected && this.controls != null) {
 			double targetX = this.target.getTargetX() * pxPerMile;
 			double targetY = this.target.getTargetY() * pxPerMile;
@@ -342,23 +375,33 @@ public class Aircraft {
 		double dx = vx * t; // In nm
 		double dy = vy * t; // In nm
 
-		// Increment the screen position based on the physical position moved (nm) in proportion to the pxPerMile
+		// Increment the screen position based on the physical position moved (nm) in proportion
+		// to the pxPerMile
 		this.x += dx * gameSpeed;
 		this.y -= dy * gameSpeed;
 
 		// Clearance heading update if still in control of the aircraft (not passed to tower yet)
 		if (this.cleared && this.controls != null)
 			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y,
-													  this.target.getTargetX(), this.target.getTargetY());
+													  this.target.getTargetX(),
+													  this.target.getTargetY());
 		else if (this.cleared && this.controls == null)
-			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y, this.target.getX(), this.target.getY());
+			this.targetHdg = AircraftMath.hdgToTarget(this.x, this.y,
+													  this.target.getX(),
+													  this.target.getY());
 
 		// Update speed, altitude, and heading
-		double altChange = ((Math.random() * (18 - 15)) + 15) * (t_s); // Between 900-1100 fpm == 15-18 fps
+		double altChange = ((Math.random() * (18 - 15)) + 15) * (t_s); // 900-1100 fpm == 15-18 fps
 		double hdgChange = (3) * (t_s); // Based on standard rate of 3 deg / sec
-		this.currentSpd = AircraftMath.approachValue(this.currentSpd, this.targetSpd, t_s * gameSpeed);
-		this.currentAlt = AircraftMath.approachValue(this.currentAlt, this.targetAlt, altChange * gameSpeed);
-		this.currentHdg = AircraftMath.approachHdg(this.currentHdg, this.targetHdg, hdgChange * gameSpeed);
+		this.currentSpd = AircraftMath.approachValue(this.currentSpd,
+													 this.targetSpd,
+													 t_s * gameSpeed);
+		this.currentAlt = AircraftMath.approachValue(this.currentAlt,
+													 this.targetAlt,
+													 altChange * gameSpeed);
+		this.currentHdg = AircraftMath.approachHdg(this.currentHdg,
+												   this.targetHdg,
+												   hdgChange * gameSpeed);
 
 		// Change clearance if needed
 		if (!this.canBeCleared())

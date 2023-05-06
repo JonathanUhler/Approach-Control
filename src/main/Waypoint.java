@@ -18,7 +18,10 @@ public abstract class Waypoint {
 		int minAlt = 0;
 		int alt = (int) (Math.random() * (maxAlt - minAlt + 1)) + minAlt;
 		// Allow clearance when altitude is <= 2000 ft for landing or == max - alt for exiting
-		this.altFromExtrema = this instanceof Runway ? 2000 : AircraftMath.round(alt, Aircraft.ALT_INTERVAL);
+		this.altFromExtrema =
+			this instanceof Runway ?
+			2000 :
+			AircraftMath.round(alt, Aircraft.ALT_INTERVAL);
 		this.x = x;
 		this.y = y;
 	}
